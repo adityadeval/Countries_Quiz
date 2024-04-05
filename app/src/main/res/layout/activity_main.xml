@@ -28,7 +28,7 @@
         android:id="@+id/button_continents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Populate continents table" />
+        android:text="Retrieve contents of continents table" />
 
     <ScrollView
         android:id="@+id/scroll_neighbours"
@@ -52,7 +52,7 @@
         android:id="@+id/button_neighbours"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Populate Neighbours table" />
+        android:text="Retrieve contents of neighbours table" />
 
     <ScrollView
         android:id="@+id/scroll_quiz_results"

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "MainActivity";
@@ -19,8 +20,9 @@ public class MainActivity extends AppCompatActivity {
 
         dataManager_obj = new DataManager(this);
 
-        button_Continents = findViewById(R.id.button_continents);
-        button_Continents.setOnClickListener( new ContinentsButtonClickListener()) ;
+        //button_Continents = findViewById(R.id.button_continents);
+        //button_Continents.setOnClickListener( new ContinentsButtonClickListener()) ;
+        new ContinentsTableWriter().execute();
     }
 
     private class ContinentsButtonClickListener implements View.OnClickListener {
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         // in the onClick listener of the Save button.
         @Override
         protected Void doInBackground(Void... voids) {
+            dataManager_obj.open();
             dataManager_obj.populate_continents_table();
             return null;
         }
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         // onPostExecute is like the notify method in an asynchronous method call discussed in class.
         @Override
         protected void onPostExecute( Void aVoid) {
+            Toast.makeText(MainActivity.this, "Table country_continent has been created", Toast.LENGTH_LONG).show();
+            //dataManager_obj.close();
             Log.d( DEBUG_TAG, "Contents of country_continent.csv file added to DB" );
         }
     }

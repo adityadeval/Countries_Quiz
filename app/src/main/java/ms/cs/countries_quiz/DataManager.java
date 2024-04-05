@@ -82,13 +82,12 @@ public class DataManager {
             CSVReader reader = new CSVReader( new InputStreamReader( ip_stream ) );
             String[] nextRow;
             while( ( nextRow = reader.readNext() ) != null ) {
-                for( int i = 0; i < nextRow.length; i++ ) {
-                    values.put(DBHelper.COLUMN_COUNTRY_NAME_CONTINENTS_TABLE, nextRow[0]);
-                    values.put(DBHelper.COLUMN_CONTINENT_NAME_CONTINENTS_TABLE, nextRow[1]);
-                    long id = db.insert(DBHelper.TABLE_CONTINENTS, null, values);
-                    //continents.setId(id);
-                    Log.d( DEBUG_TAG, "Stored new country with id: " + id ) ;
-                }
+                Log.d(DEBUG_TAG, "Fetched row from csv : "+ nextRow);
+                values.put(DBHelper.COLUMN_COUNTRY_NAME_CONTINENTS_TABLE, nextRow[0]);
+                values.put(DBHelper.COLUMN_CONTINENT_NAME_CONTINENTS_TABLE, nextRow[1]);
+                long id = db.insert(DBHelper.TABLE_CONTINENTS, null, values);
+                //continents.setId(id);
+                Log.d( DEBUG_TAG, "Stored new country with id: " + id ) ;
             }
         } catch (Exception e) {
             Log.e( DEBUG_TAG, e.toString() );
