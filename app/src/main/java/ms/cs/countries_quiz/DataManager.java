@@ -85,12 +85,12 @@ public class DataManager {
             CSVReader reader = new CSVReader( new InputStreamReader( ip_stream ) );
             String[] nextRow;
             while( ( nextRow = reader.readNext() ) != null ) {
-                Log.d(DEBUG_TAG, "Fetched row from csv : "+ nextRow);
+                //Log.d(DEBUG_TAG, "Fetched row from csv : "+ nextRow);
                 values.put(DBHelper.COLUMN_COUNTRY_NAME_CONTINENTS_TABLE, nextRow[0]);
                 values.put(DBHelper.COLUMN_CONTINENT_NAME_CONTINENTS_TABLE, nextRow[1]);
                 long id = db.insert(DBHelper.TABLE_CONTINENTS, null, values);
                 //continents.setId(id);
-                Log.d( DEBUG_TAG, "Stored new country with id: " + id ) ;
+                //Log.d( DEBUG_TAG, "Stored new country with id: " + id ) ;
             }
         } catch (Exception e) {
             Log.e( DEBUG_TAG, e.toString() );
@@ -123,7 +123,7 @@ public class DataManager {
 
                         Continents continents_obj = new Continents(country_name, continent_name);
                         continents_obj.setId(continents_id);
-                        Log.d(DEBUG_TAG, "Retrieved entry from continents table: " + continents_obj);
+                        //Log.d(DEBUG_TAG, "Retrieved entry from continents table: " + continents_obj);
 
                         arr_continents.add(continents_obj);
                     }
@@ -141,6 +141,79 @@ public class DataManager {
         }
 
         return arr_continents;
+    }
+
+    public List<Neighbours> retrieve_NeighboursTable_data() {
+        ArrayList<Neighbours> arr_neighbours = new ArrayList<>();
+        Cursor cursor = null;
+        int columnIndex;
+
+        try{
+            cursor = db.query( DBHelper.TABLE_NEIGHBOURS, allColumns_neighbours_table,
+                    null, null, null, null, null );
+
+            if( cursor != null && cursor.getCount() > 0 ) {
+
+                while( cursor.moveToNext() ) {
+
+                    if( cursor.getColumnCount() >= 3) {
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_ID_NEIGHBOURS_TABLE );
+                        long neighbours_id = cursor.getLong( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_COUNTRY_NAME_NEIGHBOURS_TABLE);
+                        String country_name = cursor.getString( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_NEIGHBOUR_NAME_NEIGHBOURS_TABLE);
+                        String neighbour_name = cursor.getString( columnIndex );
+
+                        Neighbours neighbours_obj = new Neighbours(country_name, neighbour_name);
+                        neighbours_obj.setId(neighbours_id);
+                        //Log.d(DEBUG_TAG, "Retrieved entry from neighbours table: " + neighbours_obj);
+
+                        arr_neighbours.add(neighbours_obj);
+                    }
+
+                }
+            }
+
+        }catch( Exception e ){
+            Log.d( DEBUG_TAG, "Exception caught: " + e );
+        }
+        finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return arr_neighbours;
+    }
+
+    public void populate_neighbours_table() {
+        ContentValues values = new ContentValues();
+        try {
+            InputStream ip_stream = context.getAssets().open("country_neighbors.csv");
+            CSVReader reader = new CSVReader(new InputStreamReader(ip_stream));
+            String[] nextRow;
+            while ((nextRow = reader.readNext()) != null) {
+                String countryName = nextRow[0];
+                for (int i = 1; i < nextRow.length; i++) {
+                    String neighborName = nextRow[i];
+                    if (neighborName != null && !neighborName.isEmpty()) {
+                        values.clear();
+                        values.put(DBHelper.COLUMN_COUNTRY_NAME_NEIGHBOURS_TABLE, countryName);
+                        values.put(DBHelper.COLUMN_NEIGHBOUR_NAME_NEIGHBOURS_TABLE, neighborName);
+                        long id = db.insert(DBHelper.TABLE_NEIGHBOURS, null, values);
+                        if (id == -1) {
+                            Log.e(DEBUG_TAG, "Failed to insert row for country " + countryName + " and neighbor " + neighborName);
+                        }
+                    }
+                }
+
+            }
+        }catch (Exception e) {
+            Log.e( DEBUG_TAG, e.toString() );
+        }
+
     }
 
 }

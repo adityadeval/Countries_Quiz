@@ -19,8 +19,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DEBUG_TAG = "DBHelper";
 
     //Creating string to store Android's inhouse database's name.
-    private static final String DB_NAME = "countriestrivia6.db";
-    private static final int DB_VERSION = 1;
+    private static final String DB_NAME = "countriestrivia13.db";
+    private static final int DB_VERSION = 3;
 
     //Creating strings to store table name and column names of the continents table.
     public static final String TABLE_CONTINENTS = "continents_table";
@@ -93,8 +93,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL( CREATE_CONTINENTS_TABLE );
         Log.d( DEBUG_TAG, "Table " + TABLE_CONTINENTS + " has been created" );
 
-        //db.execSQL( CREATE_NEIGHBOURS_TABLE );
-        //Log.d( DEBUG_TAG, "Table " + TABLE_NEIGHBOURS + " has been created" );
+        db.execSQL( CREATE_NEIGHBOURS_TABLE );
+        Log.d( DEBUG_TAG, "Table " + TABLE_NEIGHBOURS + " has been created" );
 
         //db.execSQL( CREATE_QUIZRESULTS_TABLE );
         //Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " has been created" );
