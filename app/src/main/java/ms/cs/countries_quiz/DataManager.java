@@ -9,6 +9,9 @@ import com.opencsv.CSVReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import android.database.Cursor;
 
 // This class is similar to JobLeadsData class, with a few changes.
 // Purpose of this class / This class holds functions for :
@@ -93,6 +96,51 @@ public class DataManager {
             Log.e( DEBUG_TAG, e.toString() );
         }
         //return continents;
+    }
+
+    public List<Continents> retrieve_ContinentsTable_data() {
+        ArrayList<Continents> arr_continents = new ArrayList<>();
+        Cursor cursor = null;
+        int columnIndex;
+
+        try{
+            cursor = db.query( DBHelper.TABLE_CONTINENTS, allColumns_continents_table,
+                    null, null, null, null, null );
+
+            if( cursor != null && cursor.getCount() > 0 ) {
+
+                while( cursor.moveToNext() ) {
+
+                    if( cursor.getColumnCount() >= 3) {
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_ID_CONTINENTS_TABLE );
+                        long continents_id = cursor.getLong( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_COUNTRY_NAME_CONTINENTS_TABLE);
+                        String country_name = cursor.getString( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_CONTINENT_NAME_CONTINENTS_TABLE);
+                        String continent_name = cursor.getString( columnIndex );
+
+                        Continents continents_obj = new Continents(country_name, continent_name);
+                        continents_obj.setId(continents_id);
+                        Log.d(DEBUG_TAG, "Retrieved entry from continents table: " + continents_obj);
+
+                        arr_continents.add(continents_obj);
+                    }
+
+                }
+            }
+
+        }catch( Exception e ){
+            Log.d( DEBUG_TAG, "Exception caught: " + e );
+        }
+        finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return arr_continents;
     }
 
 }
