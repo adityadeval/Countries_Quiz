@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DEBUG_TAG = "DBHelper";
 
     //Creating string to store Android's inhouse database's name.
-    private static final String DB_NAME = "countriestrivia14.db";
+    private static final String DB_NAME = "countriestrivia3.db";
     private static final int DB_VERSION = 1;
 
     //Creating strings to store table name and column names of the continents table.
