@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Countries_Quiz</string>
+    <string name="quiz_score_hint">Enter quiz score</string>
 </resources>
