@@ -9,8 +9,12 @@ import com.opencsv.CSVReader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import android.database.Cursor;
 
 // This class is similar to JobLeadsData class, with a few changes.
@@ -188,6 +192,54 @@ public class DataManager {
         return arr_neighbours;
     }
 
+    public List<QuizResults> retrieve_QuizResultsTable_data() {
+        ArrayList<QuizResults> arr_quizresults = new ArrayList<>();
+        Cursor cursor = null;
+        int columnIndex;
+
+        try{
+            cursor = db.query( DBHelper.TABLE_QUIZRESULTS, allColumns_quizresults_table,
+                    null, null, null, null, null );
+
+            if( cursor != null && cursor.getCount() > 0 ) {
+
+                while( cursor.moveToNext() ) {
+
+                    if( cursor.getColumnCount() >= 3) {
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_QUIZID_QUIZRESULTS_TABLE );
+                        long quiz_id = cursor.getLong( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_DATE_QUIZRESULTS_TABLE);
+                        String quiz_date = cursor.getString( columnIndex );
+
+                        columnIndex = cursor.getColumnIndex( DBHelper.COLUMN_SCORE_QUIZRESULTS_TABLE);
+                        Integer quiz_score = cursor.getInt( columnIndex );
+
+                        QuizResults quizresults_obj = new QuizResults(quiz_date, quiz_score);
+                        quizresults_obj.setQuizId(quiz_id);
+
+                        //Log.d(DEBUG_TAG, "Retrieved entry from neighbours table: " + neighbours_obj);
+
+                        arr_quizresults.add(quizresults_obj);
+                    }
+
+                }
+
+            }
+
+
+        }catch( Exception e ){
+            Log.d( DEBUG_TAG, "Exception caught: " + e );
+        }
+        finally{
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return arr_quizresults;
+    }
+
     public void populate_neighbours_table() {
         ContentValues values = new ContentValues();
         try {
@@ -214,6 +266,20 @@ public class DataManager {
             Log.e( DEBUG_TAG, e.toString() );
         }
 
+    }
+
+    public void populate_quizresults_table(int quizscore) {
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        ContentValues values = new ContentValues();
+        values.put(DBHelper.COLUMN_DATE_QUIZRESULTS_TABLE, currentDate);
+        values.put(DBHelper.COLUMN_SCORE_QUIZRESULTS_TABLE, quizscore);
+
+        long id = db.insert(DBHelper.TABLE_QUIZRESULTS, null, values);
+        if (id == -1) {
+            Log.e(DEBUG_TAG, "Failed to insert quiz result into database");
+        } else {
+            Log.d(DEBUG_TAG, "Inserted quiz result with ID: " + id);
+        }
     }
 
 }

@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,16 +21,25 @@ public class MainActivity extends AppCompatActivity {
     private DataManager dataManager_obj = null;
     private Button button_Continents;
     private Button button_Neighbours;
+    private Button button_quizscore;
+    private Button button_quizresults;
     private TableLayout tableLayout_continents;
     private TableLayout tableLayout_neighbours;
+    private TableLayout tableLayout_quizresults;
+    private EditText et_quizscore;
+    private int quizScore;
     private List<Continents> arr_Continents;
     private List<Neighbours> arr_Neighbours;
+    private List<QuizResults> arr_QuizResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Below object of DataManager class will be used for many tasks in MainActivity.
+        // Its Most imp methods are the one used for insertions and fetching of data from database tables.
+        // It also contains object of DBHelper, which helps in database creation, opening and closing the database.
         dataManager_obj = new DataManager(this);
 
         // Below function fetches data from country_continent.csv into table continents.
@@ -40,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         arr_Continents = new ArrayList<Continents>();
         arr_Neighbours = new ArrayList<Neighbours>();
+        arr_QuizResults = new ArrayList<QuizResults>();
 
         tableLayout_continents = findViewById(R.id.table_continents);
         tableLayout_continents.removeAllViews();
@@ -47,12 +59,24 @@ public class MainActivity extends AppCompatActivity {
         tableLayout_neighbours = findViewById(R.id.table_neighbours);
         tableLayout_neighbours.removeAllViews();
 
+        tableLayout_quizresults = findViewById(R.id.table_quizresults);
+        tableLayout_quizresults.removeAllViews();
+
+        et_quizscore = findViewById(R.id.et_quizscore);
+
+
         // Button for retrieving records from continents table
         button_Continents = findViewById(R.id.button_continents);
         button_Continents.setOnClickListener( new ContinentsButtonClickListener()) ;
 
         button_Neighbours = findViewById(R.id.button_neighbours);
         button_Neighbours.setOnClickListener(new NeighboursButtonClickListener());
+
+        button_quizscore = findViewById(R.id.button_quizscore);
+        button_quizscore.setOnClickListener(new QuizScoreButtonClickListener());
+
+        button_quizresults = findViewById(R.id.button_quizresults);
+        button_quizresults.setOnClickListener(new QuizResultsButtonClickListener());
     }
 
     private class ContinentsButtonClickListener implements View.OnClickListener {
@@ -73,6 +97,32 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             dataManager_obj.open();
             new NeighboursTableReader().execute();
+        }
+    }
+
+    private class QuizScoreButtonClickListener implements View.OnClickListener {
+
+        public void onClick(View v) {
+
+            String score_string = et_quizscore.getText().toString();
+            try {
+                    quizScore = Integer.parseInt(score_string);
+                // Use quizScore for your operations
+            } catch (NumberFormatException e) {
+                // Handle the exception, maybe show an error message to the user
+                Toast.makeText(MainActivity.this, "Please enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+
+            dataManager_obj.open();
+            new QuizResultsTableWriter().execute(quizScore);
+
+        }
+    }
+
+    private class QuizResultsButtonClickListener implements View.OnClickListener {
+        public void onClick(View v) {
+            dataManager_obj.open();
+            new QuizResultsTableReader().execute();
         }
     }
 
@@ -108,10 +158,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute( Void aVoid) {
-            Toast.makeText(MainActivity.this, "Table neighbours has been created", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Table neighbours has been created", Toast.LENGTH_SHORT).show();
             dataManager_obj.close();
             Log.d( DEBUG_TAG, "Contents of country_neighbours.csv file added to DB" );
         }
+    }
+
+    public class QuizResultsTableWriter extends AsyncTask<Integer, Void> {
+        protected Void doInBackground(Integer... scores) {
+            dataManager_obj.open();
+            dataManager_obj.populate_quizresults_table(scores[0]);
+            return null;
+        }
+
+        protected void onPostExecute( Void aVoid) {
+            Toast.makeText(MainActivity.this, "Given score has been saved", Toast.LENGTH_SHORT).show();
+            dataManager_obj.close();
+            Log.d(DEBUG_TAG, "Given score has been added to DB");
+        }
+
     }
 
     private class ContinentsTableReader extends AsyncTask<Void, List<Continents>> {
@@ -156,6 +221,51 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private class QuizResultsTableReader extends AsyncTask<Void, List<QuizResults>> {
+        protected List<QuizResults> doInBackground( Void... params ) {
+            dataManager_obj.open();
+            List<QuizResults> arr_QuizResults = dataManager_obj.retrieve_QuizResultsTable_data();
+            return arr_QuizResults;
+        }
+
+        protected void onPostExecute( List<QuizResults> list_QuizResults ) {
+            arr_QuizResults.addAll(list_QuizResults);
+            tableLayout_quizresults.removeAllViews();
+
+            for (QuizResults quizresults : list_QuizResults) {
+                TableRow row = new TableRow(MainActivity.this);
+                TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
+                row.setLayoutParams(lp);
+
+                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+                // Convert dp to pixels for consistent spacing across different screen densities
+                int marginInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+                layoutParams.setMargins(marginInPixels, 0, marginInPixels, 0);
+
+                TextView quizidView = new TextView(MainActivity.this);
+                quizidView.setText(String.valueOf(quizresults.getQuizId()));
+                quizidView.setLayoutParams(layoutParams);
+                row.addView(quizidView);
+
+                TextView quizdateView = new TextView(MainActivity.this);
+                quizdateView.setText(quizresults.getQuizDate());
+                quizidView.setLayoutParams(layoutParams);
+                row.addView(quizdateView);
+
+                TextView quizscoreView = new TextView(MainActivity.this);
+                int score = quizresults.getQuizScore();
+                quizscoreView.setText(String.valueOf(score));
+                quizidView.setLayoutParams(layoutParams);
+                row.addView(quizscoreView);
+
+                // Add the TableRow to the TableLayout.
+                tableLayout_quizresults.addView(row);
+            }
+
+            dataManager_obj.close();
+        }
     }
 
 

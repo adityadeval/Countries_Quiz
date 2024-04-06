@@ -96,8 +96,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL( CREATE_NEIGHBOURS_TABLE );
         Log.d( DEBUG_TAG, "Table " + TABLE_NEIGHBOURS + " has been created" );
 
-        //db.execSQL( CREATE_QUIZRESULTS_TABLE );
-        //Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " has been created" );
+        db.execSQL( CREATE_QUIZRESULTS_TABLE );
+        Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " has been created" );
     }
 
     @Override
@@ -110,8 +110,8 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate( db );
         Log.d( DEBUG_TAG, "Table " + TABLE_NEIGHBOURS + " upgraded" );
 
-        //db.execSQL( "drop table if exists " + TABLE_QUIZRESULTS );
-        //onCreate( db );
-        //Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " upgraded" );
+        db.execSQL( "drop table if exists " + TABLE_QUIZRESULTS );
+        onCreate( db );
+        Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " upgraded" );
     }
 }
