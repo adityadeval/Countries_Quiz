@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home"
+    android:orientation="vertical"
+    tools:context=".SplashScreen">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:text="WELCOME TO COUNTRY QUIZ!"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/infoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:paddingStart="10sp"
+            android:paddingEnd="10sp"
+            android:text="Embark on an exciting journey to test your knowledge of countries and continents! Country Quiz is designed to challenge and enrich your understanding of global geography.\n\nHow to Play:\n\n1. Answer Each Question: Dive into diverse topics about countries, capitals, cultures, and more.\n2. Earn Points: Correct answers will boost your score, showcasing your expertise.\n3. Aim for Excellence: Strive for a high score and compete against your friends or challenge yourself.\n4. Explore Past Results: Reflect on your progress and learn from previous quizzes in the Results section."
+            android:textAlignment="gravity"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/startQuizButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15sp"
+            android:onClick="navigateToQuizFragment"
+            android:text="START QUIZ" />
+
+        <Button
+            android:id="@+id/viewResultsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="navigateToResultsFragment"
+            android:text="RESULTS" />
+    </LinearLayout>
+</LinearLayout>
