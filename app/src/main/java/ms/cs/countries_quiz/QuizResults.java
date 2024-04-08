@@ -1,9 +1,15 @@
 package ms.cs.countries_quiz;
 
+import java.util.List;
+
 public class QuizResults {
+    private static final String DEBUG_TAG = "QuizResults";
+    private int quizScore;
+    private List<QuizResults> arr_QuizResults;
     private long   quiz_id;
     private String quiz_date;
     private Integer quiz_score;
+
 
     public QuizResults(){
         this.quiz_id = -1;
@@ -16,7 +22,6 @@ public class QuizResults {
         this.quiz_date = quiz_date;
         this.quiz_score = quiz_score;
     }
-
     public long getQuizId()
     {
         return quiz_id;
@@ -51,5 +56,4 @@ public class QuizResults {
     {
         return quiz_id + ": " + quiz_date + " " + quiz_score;
     }
-
 }

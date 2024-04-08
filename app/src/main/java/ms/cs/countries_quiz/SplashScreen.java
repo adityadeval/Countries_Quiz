@@ -34,6 +34,7 @@ public class SplashScreen extends AppCompatActivity {
         // This is done in an ASYNC TASK.
         new SplashScreen.ContinentsTableWriter().execute();
         new SplashScreen.NeighboursTableWriter().execute();
+      //  new SplashScreen.QuizResultsTableWriter().execute();
 
         arr_Continents = new ArrayList<Continents>();
         arr_Neighbours = new ArrayList<Neighbours>();
@@ -81,13 +82,13 @@ public class SplashScreen extends AppCompatActivity {
     public class QuizResultsTableWriter extends AsyncTask<Integer, Void> {
         protected Void doInBackground(Integer... scores) {
             dataManager_obj.open();
-            dataManager_obj.populate_quizresults_table(scores[0]);
+            dataManager_obj.populate_quizresults_table(6);
             return null;
         }
 
         protected void onPostExecute( Void aVoid) {
             Toast.makeText(SplashScreen.this, "Given score has been saved", Toast.LENGTH_SHORT).show();
-            dataManager_obj.close();
+          //  dataManager_obj.close();
             Log.d(DEBUG_TAG, "Given score has been added to DB");
         }
     }
@@ -149,8 +150,9 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     public void navigateToResultsFragment(View view) {
-        // Intent to start MainActivity (which will host your ResultsFragment)
-        Intent intent = new Intent(this, QuizResults.class);
+        // Intent to start QuizResultsActivity
+        Log.d(DEBUG_TAG, "navigateToResultsFragment");
+        Intent intent = new Intent(this, QuizResultsActivity.class);
         startActivity(intent);
 
         // Finish this activity so it's removed from the back stack

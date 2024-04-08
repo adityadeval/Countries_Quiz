@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,10 +200,15 @@ public class CountryQuizFragment extends Fragment {
     // Add this method to calculate and display quiz result
     private void displayQuizResult() {
         if (isAllQuestionsAnswered()) {
-            // Calculate quiz score and display result
+            // Calculate quiz score
             int score = calculateScore();
+
+            // Display quiz result in a Toast
             String resultMessage = "Quiz Completed!\nYour Score: " + score;
             Toast.makeText(getContext(), resultMessage, Toast.LENGTH_LONG).show();
+
+            // Navigate to the result fragment
+            navigateToResultFragment(score);
         } else {
             // Handle case where not all questions are answered
             Toast.makeText(getContext(), "Please answer all questions.", Toast.LENGTH_SHORT).show();
@@ -218,8 +225,22 @@ public class CountryQuizFragment extends Fragment {
         }
         return score;
     }
+    // Add this method to navigate to the result fragment
+    private void navigateToResultFragment(int score) {
+        // Create a new instance of the ResultFragment
+        ResultFragment resultFragment = ResultFragment.newInstance(score);
 
+        // Get the FragmentManager and start a transaction
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
+        // Replace the current fragment with the result fragment
+        transaction.replace(R.id.fragment_container, resultFragment);
+
+        // Add the transaction to the back stack and commit
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
     public static int getNumberOfQuestions() {
         Log.d( DEBUG_TAG, "getNumberOfQuestions, quizQuestions: "+quizQuestions );
         return quizQuestions != null ? quizQuestions.size() : 0;
