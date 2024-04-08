@@ -46,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start New Quiz"
+        android:onClick="navigateToQuizFragment"
         android:layout_gravity="center_horizontal"/>
 
     <Button
@@ -53,6 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="View Score Board"
+        android:onClick="navigateToResultsFragment"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"/>
 

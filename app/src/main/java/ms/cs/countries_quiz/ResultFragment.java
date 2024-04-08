@@ -1,6 +1,8 @@
 package ms.cs.countries_quiz;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class ResultFragment extends Fragment {
+    private static final String DEBUG_TAG = "ResultFragment";
     private static final String ARG_SCORE = "score";
 
     public ResultFragment() {
@@ -42,6 +45,25 @@ public class ResultFragment extends Fragment {
         // Display the score in a TextView
         TextView scoreTextView = view.findViewById(R.id.scoreTextView);
         scoreTextView.setText("Your Score: " + score);
+    }
+    public void navigateToQuizFragment(View view) {
+        // Intent to start MainActivity (which will host your QuizFragment)
+
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        startActivity(intent);
+
+        // Finish this activity so it's removed from the back stack
+      //  finish();
+    }
+
+    public void navigateToResultsFragment(View view) {
+        // Intent to start QuizResultsActivity
+        Log.d(DEBUG_TAG, "navigateToResultsFragment");
+        Intent intent = new Intent(requireContext(), QuizResultsActivity.class);
+        startActivity(intent);
+
+        // Finish this activity so it's removed from the back stack
+      //  finish();
     }
 }
 
