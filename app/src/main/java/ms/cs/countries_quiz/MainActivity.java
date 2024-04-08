@@ -1,9 +1,12 @@
 package ms.cs.countries_quiz;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "MainActivity";
