@@ -60,7 +60,15 @@
             android:id="@+id/viewResultsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15sp"
             android:onClick="navigateToResultsFragment"
-            android:text="RESULTS" />
+            android:text="SCORE BOARD" />
+
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="navigateToExit"
+            android:text="EXIT" />
     </LinearLayout>
 </LinearLayout>

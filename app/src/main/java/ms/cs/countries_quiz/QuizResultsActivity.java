@@ -3,6 +3,7 @@ package ms.cs.countries_quiz;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -66,5 +67,8 @@ public class QuizResultsActivity extends AppCompatActivity {
 
             dataManager_obj.close();
         }
+    }
+    public void navigateToExit(View view) {
+        finish();
     }
 }

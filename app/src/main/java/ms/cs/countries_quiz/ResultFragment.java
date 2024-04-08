@@ -63,7 +63,11 @@ public class ResultFragment extends Fragment {
         startActivity(intent);
 
         // Finish this activity so it's removed from the back stack
-      //  finish();
+     //  finish();
+    }
+    public void navigateToExit(View view) {
+        // Finish this activity so it's removed from the back stack
+        //   finish();
     }
 }
 

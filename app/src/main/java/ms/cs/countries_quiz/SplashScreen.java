@@ -59,7 +59,7 @@ public class SplashScreen extends AppCompatActivity {
         // onPostExecute is like the notify method in an asynchronous method call discussed in class.
         @Override
         protected void onPostExecute( Void aVoid) {
-            Toast.makeText(SplashScreen.this, "Table continents has been created", Toast.LENGTH_LONG).show();
+        //    Toast.makeText(SplashScreen.this, "Table continents has been created", Toast.LENGTH_LONG).show();
      //       dataManager_obj.close();
             Log.d( DEBUG_TAG, "Contents of country_continent.csv file added to DB" );
         }
@@ -73,7 +73,7 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         protected void onPostExecute( Void aVoid) {
-            Toast.makeText(SplashScreen.this, "Table neighbours has been created", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(SplashScreen.this, "Table neighbours has been created", Toast.LENGTH_SHORT).show();
       //      dataManager_obj.close();
             Log.d( DEBUG_TAG, "Contents of country_neighbours.csv file added to DB" );
         }
@@ -87,7 +87,7 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         protected void onPostExecute( Void aVoid) {
-            Toast.makeText(SplashScreen.this, "Given score has been saved", Toast.LENGTH_SHORT).show();
+       //     Toast.makeText(SplashScreen.this, "Given score has been saved", Toast.LENGTH_SHORT).show();
           //  dataManager_obj.close();
             Log.d(DEBUG_TAG, "Given score has been added to DB");
         }
@@ -156,6 +156,10 @@ public class SplashScreen extends AppCompatActivity {
         startActivity(intent);
 
         // Finish this activity so it's removed from the back stack
+        finish();
+    }
+
+    public void navigateToExit(View view) {
         finish();
     }
 }
