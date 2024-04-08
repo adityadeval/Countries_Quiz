@@ -127,7 +127,7 @@ public class DataManager {
 
                         Continents continents_obj = new Continents(country_name, continent_name);
                         continents_obj.setId(continents_id);
-                        //Log.d(DEBUG_TAG, "Retrieved entry from continents table: " + continents_obj);
+                   //     Log.d(DEBUG_TAG, "Retrieved entry from continents table: " + continents_obj);
 
                         arr_continents.add(continents_obj);
                     }
@@ -143,7 +143,7 @@ public class DataManager {
                 cursor.close();
             }
         }
-
+        Log.d( DEBUG_TAG, "arr_continents: " + arr_continents );
         return arr_continents;
     }
 
@@ -188,7 +188,7 @@ public class DataManager {
                 cursor.close();
             }
         }
-
+        Log.d( DEBUG_TAG, "arr_neighbours: " + arr_neighbours );
         return arr_neighbours;
     }
 

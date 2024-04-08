@@ -12,6 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Countries_Quiz"
         tools:targetApi="31">
+        <activity android:name=".SplashScreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -22,5 +29,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
