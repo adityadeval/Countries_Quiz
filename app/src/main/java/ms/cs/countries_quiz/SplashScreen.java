@@ -1,6 +1,7 @@
 package ms.cs.countries_quiz;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,23 +24,23 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
+            // Below object of DataManager class will be used for many tasks in MainActivity.
+            // Its Most imp methods are the one used for insertions and fetching of data from database tables.
+            // It also contains object of DBHelper, which helps in database creation, opening and closing the database.
+            dataManager_obj = new DataManager(this);
 
-        // Below object of DataManager class will be used for many tasks in MainActivity.
-        // Its Most imp methods are the one used for insertions and fetching of data from database tables.
-        // It also contains object of DBHelper, which helps in database creation, opening and closing the database.
-        dataManager_obj = new DataManager(this);
+            // Below function fetches data from country_continent.csv into table continents.
+            // Displays toast once done.
+            // This is done in an ASYNC TASK.
+            new SplashScreen.ContinentsTableWriter().execute();
+            new SplashScreen.NeighboursTableWriter().execute();
+            //  new SplashScreen.QuizResultsTableWriter().execute();
 
-        // Below function fetches data from country_continent.csv into table continents.
-        // Displays toast once done.
-        // This is done in an ASYNC TASK.
-        new SplashScreen.ContinentsTableWriter().execute();
-        new SplashScreen.NeighboursTableWriter().execute();
-      //  new SplashScreen.QuizResultsTableWriter().execute();
+            arr_Continents = new ArrayList<Continents>();
+            arr_Neighbours = new ArrayList<Neighbours>();
+            arr_QuizResults = new ArrayList<QuizResults>();
+        }
 
-        arr_Continents = new ArrayList<Continents>();
-        arr_Neighbours = new ArrayList<Neighbours>();
-        arr_QuizResults = new ArrayList<QuizResults>();
-    }
 
     public class ContinentsTableWriter extends AsyncTask<Void, Void> {
 

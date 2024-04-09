@@ -34,19 +34,37 @@ public class CountryQuizFragment extends Fragment {
     private int questionNumber;
     private String userAnswer;
 
+    /*
     public CountryQuizFragment(Context context) {
         Log.d( DEBUG_TAG, "Inside Constructor" );
         this.context = context;
+
+        // Below lines moved in onAttach()
         this.quizManager_obj = new QuizManager(this.context);
         this.question_obj = new Question(this.context);
+
+        // Moved into onCreate()
         this.quizQuestions = new ArrayList<>();
         this.continentQuizQuestions = new ArrayList<>();
         this.neighborQuizQuestions = new ArrayList<>();
+
+
         this.quizQuestionsMap = this.quizManager_obj.startNewQuiz();
     }
 
+     */
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d(DEBUG_TAG, "Inside onAttach");
+        this.quizManager_obj = new QuizManager(context);
+        this.question_obj = new Question(context);
+    }
+
     public static CountryQuizFragment newInstance(int questionNumber) {
-        CountryQuizFragment fragment = new CountryQuizFragment(context);
+        Log.d(DEBUG_TAG, "Creating new fragment position/questionNumber is " + questionNumber);
+        CountryQuizFragment fragment = new CountryQuizFragment();
         Bundle args = new Bundle();
         args.putInt("questionNumber", questionNumber);
         fragment.setArguments(args);
@@ -58,14 +76,22 @@ public class CountryQuizFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d( DEBUG_TAG, "onCreate, getArguments:"+questionNumber );
-        if (getArguments() != null) {
-            questionNumber = getArguments().getInt("questionNumber");
-        }
+
+            quizQuestions = new ArrayList<>();
+            continentQuizQuestions = new ArrayList<>();
+            neighborQuizQuestions = new ArrayList<>();
+
+            if (getArguments() != null) {
+                questionNumber = getArguments().getInt("questionNumber");
+            }
+
+            this.quizQuestionsMap = this.quizManager_obj.startNewQuiz();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d( DEBUG_TAG, "onCreateView, getArguments:"+questionNumber );
         View rootView = inflater.inflate(R.layout.activity_fragment, container, false);
 
         // Initialize userAnswer as empty string
@@ -184,6 +210,7 @@ public class CountryQuizFragment extends Fragment {
             displayQuizResult();
         }
     }
+
     private void recordUserAnswer() {
         RadioGroup radioGroup1 = getView().findViewById(R.id.radioGroup1);
         int selectedRadioButtonId = radioGroup1.getCheckedRadioButtonId();
