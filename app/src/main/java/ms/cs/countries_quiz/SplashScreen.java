@@ -1,7 +1,10 @@
 package ms.cs.countries_quiz;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +18,7 @@ import java.util.List;
 public class SplashScreen extends AppCompatActivity {
     private static final String DEBUG_TAG = "SplashScreen";
     private static DataManager dataManager_obj = null;
+    private Context context;
     private int quizScore;
     private List<Continents> arr_Continents;
     private List<Neighbours> arr_Neighbours;
@@ -32,9 +36,22 @@ public class SplashScreen extends AppCompatActivity {
             // Below function fetches data from country_continent.csv into table continents.
             // Displays toast once done.
             // This is done in an ASYNC TASK.
-            new SplashScreen.ContinentsTableWriter().execute();
-            new SplashScreen.NeighboursTableWriter().execute();
-            //  new SplashScreen.QuizResultsTableWriter().execute();
+            DBHelper dbHelper = new DBHelper(this);
+            SQLiteDatabase db = dbHelper.getWritableDatabase(); // or getReadableDatabase()
+
+            // Check if tables exist
+            boolean continentsTableExists = dbHelper.doesTableExist(db, "continents_table");
+            boolean neighboursTableExists = dbHelper.doesTableExist(db, "neighbours_table");
+
+            // Only execute tasks if both tables doesn't exist
+            if (continentsTableExists) {
+                Log.d( DEBUG_TAG, "continents_table exists" );
+                new SplashScreen.ContinentsTableWriter().execute();
+            }
+            if(neighboursTableExists){
+                Log.d( DEBUG_TAG, "neighbours_table exists" );
+                new SplashScreen.NeighboursTableWriter().execute();
+            }
 
             arr_Continents = new ArrayList<Continents>();
             arr_Neighbours = new ArrayList<Neighbours>();
