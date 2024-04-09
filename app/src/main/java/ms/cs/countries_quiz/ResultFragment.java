@@ -25,12 +25,14 @@ public class ResultFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt(ARG_SCORE, score);
         fragment.setArguments(args);
+        Log.d(DEBUG_TAG, "fragment " + fragment);
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(DEBUG_TAG, "onCreateView ");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_result, container, false);
     }
@@ -38,10 +40,11 @@ public class ResultFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(DEBUG_TAG, "onViewCreated ");
 
         // Get the score from arguments
         int score = getArguments() != null ? getArguments().getInt(ARG_SCORE) : 0;
-
+        Log.d(DEBUG_TAG, "score: "+score);
         // Display the score in a TextView
         TextView scoreTextView = view.findViewById(R.id.scoreTextView);
         scoreTextView.setText("Your Score: " + score);

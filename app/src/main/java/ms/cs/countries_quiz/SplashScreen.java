@@ -14,7 +14,7 @@ import java.util.List;
 
 public class SplashScreen extends AppCompatActivity {
     private static final String DEBUG_TAG = "SplashScreen";
-    private DataManager dataManager_obj = null;
+    private static DataManager dataManager_obj = null;
     private int quizScore;
     private List<Continents> arr_Continents;
     private List<Neighbours> arr_Neighbours;
@@ -80,10 +80,10 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
-    public class QuizResultsTableWriter extends AsyncTask<Integer, Void> {
+    public static class QuizResultsTableWriter extends AsyncTask<Integer, Void> {
         protected Void doInBackground(Integer... scores) {
             dataManager_obj.open();
-            dataManager_obj.populate_quizresults_table(6);
+            dataManager_obj.populate_quizresults_table(scores[0]);
             return null;
         }
 
