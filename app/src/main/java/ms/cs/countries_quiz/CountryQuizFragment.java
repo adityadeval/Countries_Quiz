@@ -25,6 +25,7 @@ import java.util.Random;
 public class CountryQuizFragment extends Fragment {
     public static final String DEBUG_TAG = "CountryQuizFragment";
     private static Context context = null;
+
     private QuizManager quizManager_obj;
     private Question question_obj;
     private Map<String,List> quizQuestionsMap;
@@ -32,39 +33,22 @@ public class CountryQuizFragment extends Fragment {
     private static List<Question> continentQuizQuestions;
     private static List<Question> neighborQuizQuestions;
     private int questionNumber;
-    private String userAnswer;
+    private String continentAnswer;
+    private String neighborAnswer;
 
-    /*
     public CountryQuizFragment(Context context) {
         Log.d( DEBUG_TAG, "Inside Constructor" );
         this.context = context;
-
-        // Below lines moved in onAttach()
         this.quizManager_obj = new QuizManager(this.context);
         this.question_obj = new Question(this.context);
-
-        // Moved into onCreate()
         this.quizQuestions = new ArrayList<>();
         this.continentQuizQuestions = new ArrayList<>();
         this.neighborQuizQuestions = new ArrayList<>();
-
-
         this.quizQuestionsMap = this.quizManager_obj.startNewQuiz();
     }
 
-     */
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Log.d(DEBUG_TAG, "Inside onAttach");
-        this.quizManager_obj = new QuizManager(context);
-        this.question_obj = new Question(context);
-    }
-
     public static CountryQuizFragment newInstance(int questionNumber) {
-        Log.d(DEBUG_TAG, "Creating new fragment position/questionNumber is " + questionNumber);
-        CountryQuizFragment fragment = new CountryQuizFragment();
+        CountryQuizFragment fragment = new CountryQuizFragment(context);
         Bundle args = new Bundle();
         args.putInt("questionNumber", questionNumber);
         fragment.setArguments(args);
@@ -76,36 +60,22 @@ public class CountryQuizFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d( DEBUG_TAG, "onCreate, getArguments:"+questionNumber );
-
-            quizQuestions = new ArrayList<>();
-            continentQuizQuestions = new ArrayList<>();
-            neighborQuizQuestions = new ArrayList<>();
-
-            if (getArguments() != null) {
-                questionNumber = getArguments().getInt("questionNumber");
-            }
-
-            this.quizQuestionsMap = this.quizManager_obj.startNewQuiz();
+        if (getArguments() != null) {
+            questionNumber = getArguments().getInt("questionNumber");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d( DEBUG_TAG, "onCreateView, getArguments:"+questionNumber );
+        Log.d( DEBUG_TAG, "onCreateView" );
         View rootView = inflater.inflate(R.layout.activity_fragment, container, false);
 
         // Initialize userAnswer as empty string
-        userAnswer = "";
+        continentAnswer = "";
+        neighborAnswer = "";
 
-        // Set up swipe gesture detection
-        rootView.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
-            @Override
-            public void onSwipeLeft() {
-                super.onSwipeLeft();
-                // Record user's answer when swiping left
-                recordUserAnswer();
-            }
-        });
+        setupSwipeListener(rootView);
 
         return rootView;
     }
@@ -207,28 +177,47 @@ public class CountryQuizFragment extends Fragment {
 
         // Check if all questions are answered after swiping left
         if (isAllQuestionsAnswered()) {
+            Log.d( DEBUG_TAG, "isAllQuestionsAnswered condition satisfied, call displayQuizResult" );
             displayQuizResult();
         }
     }
-
     private void recordUserAnswer() {
+        Log.d(DEBUG_TAG, "recordUserAnswer: ");
         RadioGroup radioGroup1 = getView().findViewById(R.id.radioGroup1);
-        int selectedRadioButtonId = radioGroup1.getCheckedRadioButtonId();
-        RadioButton selectedRadioButton = getView().findViewById(selectedRadioButtonId);
-        if (selectedRadioButton != null) {
-            userAnswer = selectedRadioButton.getText().toString();
+        RadioGroup radioGroup2 = getView().findViewById(R.id.radioGroup2);
+
+        int selectedRadioButtonId1 = radioGroup1.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton1 = getView().findViewById(selectedRadioButtonId1);
+        if (selectedRadioButton1 != null) {
+            continentAnswer = selectedRadioButton1.getText().toString();
         }
+
+        int selectedRadioButtonId2 = radioGroup2.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton2 = getView().findViewById(selectedRadioButtonId2);
+        if (selectedRadioButton2 != null) {
+            neighborAnswer = selectedRadioButton2.getText().toString();
+        }
+        Log.d(DEBUG_TAG, "continentAnswer: "+continentAnswer);
+        Log.d(DEBUG_TAG, "neighborAnswer: "+neighborAnswer);
     }
+
     // Add this method to check if all questions are answered
     private boolean isAllQuestionsAnswered() {
-        return userAnswer != null && !userAnswer.isEmpty();
+        Log.d(DEBUG_TAG, "isAllQuestionsAnswered, continentAnswer: "+neighborAnswer);
+        Log.d(DEBUG_TAG, "isAllQuestionsAnswered, neighborAnswer: "+neighborAnswer);
+        return continentAnswer != null && !continentAnswer.isEmpty() && neighborAnswer != null && !neighborAnswer.isEmpty();
     }
 
     // Add this method to calculate and display quiz result
     private void displayQuizResult() {
+        Log.d(DEBUG_TAG, "displayQuizResult");
         if (isAllQuestionsAnswered()) {
             // Calculate quiz score
             int score = calculateScore();
+            Log.d(DEBUG_TAG, "score: "+score);
+
+            // Save score to database
+            saveScoreToDatabase(score);
 
             // Display quiz result in a Toast
             String resultMessage = "Quiz Completed!\nYour Score: " + score;
@@ -242,18 +231,22 @@ public class CountryQuizFragment extends Fragment {
         }
     }
 
-    // Add this method to calculate the quiz score
+    // Add this method to calculate the quiz score for both questions
     private int calculateScore() {
+        Log.d(DEBUG_TAG, "calculateScore");
         int score = 0;
         for (Question question : quizQuestions) {
-            if (question.getCorrectContinent().equals(userAnswer)) {
+            if (question.getCorrectContinent().equals(continentAnswer) || question.getCorrectNeighbor().contains(neighborAnswer)) {
                 score++;
             }
         }
+        Log.d(DEBUG_TAG, "score: "+score);
         return score;
     }
+
     // Add this method to navigate to the result fragment
     private void navigateToResultFragment(int score) {
+        Log.d(DEBUG_TAG, "navigateToResultFragment");
         // Create a new instance of the ResultFragment
         ResultFragment resultFragment = ResultFragment.newInstance(score);
 
@@ -262,14 +255,41 @@ public class CountryQuizFragment extends Fragment {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         // Replace the current fragment with the result fragment
-        transaction.replace(R.id.fragment_container, resultFragment);
+        transaction.replace(R.id.fragment_quiz, resultFragment);
 
         // Add the transaction to the back stack and commit
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    private void setupSwipeListener(View view) {
+        OnSwipeTouchListener.OnSwipeListener swipeListener = new OnSwipeTouchListener.OnSwipeListener() {
+            @Override
+            public void onSwipeLeft() {
+                // Implement what happens on swipe left
+                Toast.makeText(getContext(), "Swiped Left", Toast.LENGTH_SHORT).show();
+                recordUserAnswer();
+            }
+
+            @Override
+            public void onSwipeRight() {
+                // Implement what happens on swipe right
+                Toast.makeText(getContext(), "Swiped Right", Toast.LENGTH_SHORT).show();
+                // Handle the swipe as needed
+            }
+        };
+
+        OnSwipeTouchListener touchListener = new OnSwipeTouchListener(getActivity(), swipeListener);
+        view.setOnTouchListener(touchListener);
+    }
+
     public static int getNumberOfQuestions() {
         Log.d( DEBUG_TAG, "getNumberOfQuestions, quizQuestions: "+quizQuestions );
         return quizQuestions != null ? quizQuestions.size() : 0;
+    }
+
+    private void saveScoreToDatabase(int score) {
+        // Call AsyncTask to save the score
+        new SplashScreen.QuizResultsTableWriter().execute(score);
     }
 }
