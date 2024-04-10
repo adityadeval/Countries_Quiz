@@ -272,7 +272,7 @@ public class DataManager {
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         ContentValues values = new ContentValues();
         values.put(DBHelper.COLUMN_DATE_QUIZRESULTS_TABLE, currentDate);
-        values.put(DBHelper.COLUMN_SCORE_QUIZRESULTS_TABLE, 5);
+        values.put(DBHelper.COLUMN_SCORE_QUIZRESULTS_TABLE, quizscore);
 
         long id = db.insert(DBHelper.TABLE_QUIZRESULTS, null, values);
         if (id == -1) {

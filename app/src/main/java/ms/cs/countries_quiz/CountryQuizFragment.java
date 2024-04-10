@@ -33,7 +33,6 @@ public class CountryQuizFragment extends Fragment {
     private static List<Question> continentQuizQuestions;
     private static List<Question> neighborQuizQuestions;
     private int questionNumber;
-    private String continentAnswer;
     private String neighborAnswer;
 
     public CountryQuizFragment(Context context) {
@@ -72,10 +71,7 @@ public class CountryQuizFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_fragment, container, false);
 
         // Initialize userAnswer as empty string
-        continentAnswer = "";
         neighborAnswer = "";
-
-        setupSwipeListener(rootView);
 
         return rootView;
     }
@@ -131,8 +127,9 @@ public class CountryQuizFragment extends Fragment {
 
         radioGroup1.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton checked_rb_que1 = getView().findViewById(checkedId);
-            continentAnswer = checked_rb_que1.getText().toString();
-            int continent_score = calculateScore_continent();
+            String continentAnswer = "";
+            continentAnswer  = checked_rb_que1.getText().toString();
+            int continent_score = calculateScore_continent(continentAnswer);
             Log.d("DEBUG_TAG", "Storing Continent question score to DB : " + continent_score);
             saveScoreToDatabase(continent_score);
             // Logic to save the selected radio button
@@ -185,73 +182,14 @@ public class CountryQuizFragment extends Fragment {
                 ((RadioButton) radioGroup2.getChildAt(3)).setText(allOptions.get(3));
             }
         }
-
-
-        /*
-        // Check if all questions are answered after swiping left
-        if (isAllQuestionsAnswered()) {
-            Log.d( DEBUG_TAG, "isAllQuestionsAnswered condition satisfied, call displayQuizResult" );
-            displayQuizResult();
-        }
-
-         */
-    }
-    private void recordUserAnswer() {
-        Log.d(DEBUG_TAG, "recordUserAnswer: ");
-        RadioGroup radioGroup1 = getView().findViewById(R.id.radioGroup1);
-        RadioGroup radioGroup2 = getView().findViewById(R.id.radioGroup2);
-
-        int selectedRadioButtonId1 = radioGroup1.getCheckedRadioButtonId();
-        RadioButton selectedRadioButton1 = getView().findViewById(selectedRadioButtonId1);
-        if (selectedRadioButton1 != null) {
-            continentAnswer = selectedRadioButton1.getText().toString();
-        }
-
-        int selectedRadioButtonId2 = radioGroup2.getCheckedRadioButtonId();
-        RadioButton selectedRadioButton2 = getView().findViewById(selectedRadioButtonId2);
-        if (selectedRadioButton2 != null) {
-            neighborAnswer = selectedRadioButton2.getText().toString();
-        }
-        Log.d(DEBUG_TAG, "continentAnswer: "+continentAnswer);
-        Log.d(DEBUG_TAG, "neighborAnswer: "+neighborAnswer);
     }
 
-    // Add this method to check if all questions are answered
-    private boolean isAllQuestionsAnswered() {
-        Log.d(DEBUG_TAG, "isAllQuestionsAnswered, continentAnswer: "+neighborAnswer);
-        Log.d(DEBUG_TAG, "isAllQuestionsAnswered, neighborAnswer: "+neighborAnswer);
-        return continentAnswer != null && !continentAnswer.isEmpty() && neighborAnswer != null && !neighborAnswer.isEmpty();
-    }
-
-    // Add this method to calculate and display quiz result
-    private void displayQuizResult() {
-        Log.d(DEBUG_TAG, "displayQuizResult");
-        if (isAllQuestionsAnswered()) {
-            // Calculate quiz score
-            int score = calculateScore();
-            Log.d(DEBUG_TAG, "score: "+score);
-
-            // Save score to database
-            saveScoreToDatabase(score);
-
-            // Display quiz result in a Toast
-            String resultMessage = "Quiz Completed!\nYour Score: " + score;
-            Toast.makeText(getContext(), resultMessage, Toast.LENGTH_LONG).show();
-
-            // Navigate to the result fragment
-            navigateToResultFragment(score);
-        } else {
-            // Handle case where not all questions are answered
-            Toast.makeText(getContext(), "Please answer all questions.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // Add this method to calculate the quiz score for both questions
-    private int calculateScore() {
-        Log.d(DEBUG_TAG, "calculateScore");
+    // Method to calculate the quiz score for neighbor questions
+    private int calculateScore_neighbor() {
+        Log.d(DEBUG_TAG, "calculateScore_neighbor");
         int score = 0;
-        for (Question question : quizQuestions) {
-            if (question.getCorrectContinent().equals(continentAnswer) || question.getCorrectNeighbor().contains(neighborAnswer)) {
+        for (Question question : neighborQuizQuestions) {
+            if (question.getCorrectNeighbor().contains(neighborAnswer)) {
                 score++;
             }
         }
@@ -277,27 +215,6 @@ public class CountryQuizFragment extends Fragment {
         transaction.commit();
     }
 
-    private void setupSwipeListener(View view) {
-        OnSwipeTouchListener.OnSwipeListener swipeListener = new OnSwipeTouchListener.OnSwipeListener() {
-            @Override
-            public void onSwipeLeft() {
-                // Implement what happens on swipe left
-                Toast.makeText(getContext(), "Swiped Left", Toast.LENGTH_SHORT).show();
-                recordUserAnswer();
-            }
-
-            @Override
-            public void onSwipeRight() {
-                // Implement what happens on swipe right
-                Toast.makeText(getContext(), "Swiped Right", Toast.LENGTH_SHORT).show();
-                // Handle the swipe as needed
-            }
-        };
-
-        OnSwipeTouchListener touchListener = new OnSwipeTouchListener(getActivity(), swipeListener);
-        view.setOnTouchListener(touchListener);
-    }
-
     public static int getNumberOfQuestions() {
         Log.d( DEBUG_TAG, "getNumberOfQuestions, quizQuestions: "+quizQuestions );
         return quizQuestions != null ? quizQuestions.size() : 0;
@@ -308,7 +225,7 @@ public class CountryQuizFragment extends Fragment {
         new SplashScreen.QuizResultsTableWriter().execute(score);
     }
 
-    private int calculateScore_continent() {
+    private int calculateScore_continent(String continentAnswer) {
         Log.d(DEBUG_TAG, "calculateScore_continent");
         int score = 0;
         for (Question question : continentQuizQuestions) {
