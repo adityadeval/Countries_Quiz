@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Scroller;
 import android.widget.TextView;
 
@@ -52,18 +53,31 @@ public class ResultFragment extends Fragment {
         Log.d(DEBUG_TAG, "onViewCreated ");
 
         // Get the score from arguments
-       // int score = getArguments() != null ? getArguments().getInt(ARG_SCORE) : 0;
+        // int score = getArguments() != null ? getArguments().getInt(ARG_SCORE) : 0;
         int score = ScoreManager.getTotalScore();
         Log.d(DEBUG_TAG, "score: "+score);
         // Display the score in a TextView
         TextView scoreTextView = view.findViewById(R.id.scoreTextView);
         scoreTextView.setText("Your Score: " + score);
+
+        Button newQuizButton = view.findViewById(R.id.newQuizButton);
+        newQuizButton.setOnClickListener(v -> navigateToQuizFragment(v));
+
+        Button scoreButton = view.findViewById(R.id.scoreButton);
+        scoreButton.setOnClickListener(v -> navigateToResultsFragment(v));
+
+        Button exitButton = view.findViewById(R.id.exitButton);
+        exitButton.setOnClickListener(v -> navigateToExit(v));
     }
     public void navigateToQuizFragment(View view) {
         // Intent to start MainActivity (which will host your QuizFragment)
 
-        Intent intent = new Intent(requireContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        if (getActivity() != null) {
+            getActivity().finish(); // Close the current activity
+        }
 
         // Finish this activity so it's removed from the back stack
       //  finish();
@@ -72,7 +86,7 @@ public class ResultFragment extends Fragment {
     public void navigateToResultsFragment(View view) {
         // Intent to start QuizResultsActivity
         Log.d(DEBUG_TAG, "navigateToResultsFragment");
-        Intent intent = new Intent(requireContext(), QuizResultsActivity.class);
+        Intent intent = new Intent(getContext(), QuizResultsActivity.class);
         startActivity(intent);
 
         // Finish this activity so it's removed from the back stack
@@ -81,6 +95,9 @@ public class ResultFragment extends Fragment {
     public void navigateToExit(View view) {
         // Finish this activity so it's removed from the back stack
         //   finish();
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 }
 
