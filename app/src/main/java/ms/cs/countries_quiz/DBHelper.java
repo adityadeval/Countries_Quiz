@@ -1,6 +1,7 @@
 package ms.cs.countries_quiz;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -19,7 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DEBUG_TAG = "DBHelper";
 
     //Creating string to store Android's inhouse database's name.
-    private static final String DB_NAME = "countriestrivia.db";
+    private static final String DB_NAME = "countriestrivia1.db";
     private static final int DB_VERSION = 1;
 
     //Creating strings to store table name and column names of the continents table.
@@ -73,7 +74,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     +
                     ")";
 
-    private DBHelper( Context context ) {
+    DBHelper(Context context) {
         super( context, DB_NAME, null, DB_VERSION );
     }
 
@@ -114,4 +115,22 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate( db );
         Log.d( DEBUG_TAG, "Table " + TABLE_QUIZRESULTS + " upgraded" );
     }
+    public boolean doesTableExist(SQLiteDatabase db, String tableName) {
+        boolean exists = false;
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+tableName+"'", null);
+            if(cursor!=null) {
+                if(cursor.getCount()>0) {
+                    exists = true;
+                }
+            }
+        } finally {
+            if(cursor != null) {
+                cursor.close();
+            }
+        }
+        return exists;
+    }
+
 }
