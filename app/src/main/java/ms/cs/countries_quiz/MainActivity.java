@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String DEBUG_TAG = "MainActivity";
     private static ViewPager2 pager;
 
+    private int currentPosition = 0; // Default to the first page
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d( DEBUG_TAG, "Inside onCreate()" );
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+
                 if (position == 6) {
                      Toast.makeText(MainActivity.this, "Quiz done", Toast.LENGTH_SHORT).show();
 

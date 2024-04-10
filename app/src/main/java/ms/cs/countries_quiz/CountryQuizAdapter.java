@@ -15,6 +15,7 @@ public class CountryQuizAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position){
+
         return CountryQuizFragment
                 .newInstance( position );
     }

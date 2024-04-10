@@ -127,6 +127,17 @@ public class CountryQuizFragment extends Fragment {
                 ((RadioButton) radioGroup1.getChildAt(3)).setText(allOptions.get(3));
             }
         }
+        // Creating and displaying first question is done at this point
+
+        radioGroup1.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton checked_rb_que1 = getView().findViewById(checkedId);
+            continentAnswer = checked_rb_que1.getText().toString();
+            int continent_score = calculateScore_continent();
+            Log.d("DEBUG_TAG", "Storing Continent question score to DB : " + continent_score);
+            saveScoreToDatabase(continent_score);
+            // Logic to save the selected radio button
+            // For example, save the checkedId or associated data in the fragment's instance variables or shared preferences, or any persistent storage you prefer.
+        });
 
         if (neighborQuizQuestions != null && questionNumber >= 0 && questionNumber < neighborQuizQuestions.size()) {
             Log.d(DEBUG_TAG, "neighborQuizQuestions inside: " + neighborQuizQuestions);
@@ -175,11 +186,15 @@ public class CountryQuizFragment extends Fragment {
             }
         }
 
+
+        /*
         // Check if all questions are answered after swiping left
         if (isAllQuestionsAnswered()) {
             Log.d( DEBUG_TAG, "isAllQuestionsAnswered condition satisfied, call displayQuizResult" );
             displayQuizResult();
         }
+
+         */
     }
     private void recordUserAnswer() {
         Log.d(DEBUG_TAG, "recordUserAnswer: ");
@@ -292,4 +307,19 @@ public class CountryQuizFragment extends Fragment {
         // Call AsyncTask to save the score
         new SplashScreen.QuizResultsTableWriter().execute(score);
     }
+
+    private int calculateScore_continent() {
+        Log.d(DEBUG_TAG, "calculateScore_continent");
+        int score = 0;
+        for (Question question : continentQuizQuestions) {
+            if (question.getCorrectContinent().equals(continentAnswer)) {
+                Log.d("DEBUG_TAG", "Correct answer is " + question.getCorrectContinent() + "Selected answer" + continentAnswer);
+                score++;
+            }
+        }
+        Log.d(DEBUG_TAG, "score: "+score);
+        return score;
+    }
+
+
 }
