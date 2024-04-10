@@ -27,12 +27,16 @@ public class CountryQuizFragment extends Fragment {
     private static Context context = null;
 
     private QuizManager quizManager_obj;
+    private Quiz quiz_obj;
     private Question question_obj;
     private Map<String,List> quizQuestionsMap;
     private static List<Question> quizQuestions;
     private static List<Question> continentQuizQuestions;
     private static List<Question> neighborQuizQuestions;
     private int questionNumber;
+    private int neighbor_score;
+    private int continent_score;
+    private int finalScore;
     private String neighborAnswer;
 
     public CountryQuizFragment(Context context) {
@@ -40,10 +44,13 @@ public class CountryQuizFragment extends Fragment {
         this.context = context;
         this.quizManager_obj = new QuizManager(this.context);
         this.question_obj = new Question(this.context);
+        this.quiz_obj = new Quiz();
         this.quizQuestions = new ArrayList<>();
         this.continentQuizQuestions = new ArrayList<>();
         this.neighborQuizQuestions = new ArrayList<>();
         this.quizQuestionsMap = this.quizManager_obj.startNewQuiz();
+        continentQuizQuestions = quizQuestionsMap.get("continent");
+        neighborQuizQuestions = quizQuestionsMap.get("neighbor");
     }
 
     public static CountryQuizFragment newInstance(int questionNumber) {
@@ -79,10 +86,6 @@ public class CountryQuizFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        continentQuizQuestions = quizQuestionsMap.get("continent");
-        neighborQuizQuestions = quizQuestionsMap.get("neighbor");
-        Log.d(DEBUG_TAG, "onViewCreated, continentQuizQuestions: " + continentQuizQuestions);
-        Log.d(DEBUG_TAG, "onViewCreated, neighborQuestions: " + neighborQuizQuestions);
 
         TextView question1TextView = view.findViewById(R.id.textView3);
         RadioGroup radioGroup1 = view.findViewById(R.id.radioGroup1);
@@ -124,14 +127,14 @@ public class CountryQuizFragment extends Fragment {
             }
         }
         // Creating and displaying first question is done at this point
-
         radioGroup1.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton checked_rb_que1 = getView().findViewById(checkedId);
             String continentAnswer = "";
             continentAnswer  = checked_rb_que1.getText().toString();
-            int continent_score = calculateScore_continent(continentAnswer);
+            Log.d(DEBUG_TAG, "before calc continentAnswer: "+continentAnswer);
+            continent_score = calculateScore_continent(continentAnswer);
             Log.d("DEBUG_TAG", "Storing Continent question score to DB : " + continent_score);
-            saveScoreToDatabase(continent_score);
+         //   saveScoreToDatabase(continent_score);
             // Logic to save the selected radio button
             // For example, save the checkedId or associated data in the fragment's instance variables or shared preferences, or any persistent storage you prefer.
         });
@@ -182,10 +185,41 @@ public class CountryQuizFragment extends Fragment {
                 ((RadioButton) radioGroup2.getChildAt(3)).setText(allOptions.get(3));
             }
         }
+
+        radioGroup2.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton checked_rb_que2 = getView().findViewById(checkedId);
+            String neighborAnswer = "";
+            neighborAnswer  = checked_rb_que2.getText().toString();
+            Log.d(DEBUG_TAG, "before calc neighborAnswer: "+neighborAnswer);
+            neighbor_score = calculateScore_neighbor(neighborAnswer);
+            Log.d("DEBUG_TAG", "Storing Neighbor question score to DB : " + neighbor_score);
+          //  saveScoreToDatabase(neighbor_score);
+            // Logic to save the selected radio button
+            // For example, save the checkedId or associated data in the fragment's instance variables or shared preferences, or any persistent storage you prefer.
+        });
+
+         finalScore = continent_score + neighbor_score;
+    }
+    // Method to calculate the quiz score for continent questions
+    private int calculateScore_continent(String continentAnswer) {
+        Log.d(DEBUG_TAG, "calculateScore_continent");
+        int score = 0;
+        Log.d(DEBUG_TAG, "continentQuizQuestions: "+continentQuizQuestions);
+        for (Question question : continentQuizQuestions) {
+            Log.d(DEBUG_TAG, "Inside for loop");
+            if (question.getCorrectContinent().equals(continentAnswer)) {
+                Log.d("DEBUG_TAG", "Correct answer is " + question.getCorrectContinent() + "Selected answer" + continentAnswer);
+                score++;
+                Log.d(DEBUG_TAG, "score: "+score);
+                break;
+            }
+        }
+        Log.d(DEBUG_TAG, "score: "+score);
+        return score;
     }
 
     // Method to calculate the quiz score for neighbor questions
-    private int calculateScore_neighbor() {
+    private int calculateScore_neighbor(String neighborAnswer) {
         Log.d(DEBUG_TAG, "calculateScore_neighbor");
         int score = 0;
         for (Question question : neighborQuizQuestions) {
@@ -224,19 +258,4 @@ public class CountryQuizFragment extends Fragment {
         // Call AsyncTask to save the score
         new SplashScreen.QuizResultsTableWriter().execute(score);
     }
-
-    private int calculateScore_continent(String continentAnswer) {
-        Log.d(DEBUG_TAG, "calculateScore_continent");
-        int score = 0;
-        for (Question question : continentQuizQuestions) {
-            if (question.getCorrectContinent().equals(continentAnswer)) {
-                Log.d("DEBUG_TAG", "Correct answer is " + question.getCorrectContinent() + "Selected answer" + continentAnswer);
-                score++;
-            }
-        }
-        Log.d(DEBUG_TAG, "score: "+score);
-        return score;
-    }
-
-
 }
