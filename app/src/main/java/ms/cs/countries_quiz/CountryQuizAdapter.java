@@ -16,8 +16,14 @@ public class CountryQuizAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position){
 
-        return CountryQuizFragment
-                .newInstance( position );
+        if (position < 6) {
+            return CountryQuizFragment
+                    .newInstance( position );
+        }else{
+            return ResultFragment.newInstance();
+        }
+
+
     }
     @Override
     public int getItemCount() {

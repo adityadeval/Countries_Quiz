@@ -34,9 +34,9 @@ public class CountryQuizFragment extends Fragment {
     private static List<Question> continentQuizQuestions;
     private static List<Question> neighborQuizQuestions;
     private int questionNumber;
-    private int neighbor_score;
-    private int continent_score;
-    private int finalScore;
+    int neighbor_score;
+    int continent_score;
+    int finalScore;
     private String neighborAnswer;
 
     public CountryQuizFragment(Context context) {
@@ -134,6 +134,7 @@ public class CountryQuizFragment extends Fragment {
             Log.d(DEBUG_TAG, "before calc continentAnswer: "+continentAnswer);
             continent_score = calculateScore_continent(continentAnswer);
             Log.d("DEBUG_TAG", "Storing Continent question score to DB : " + continent_score);
+            ScoreManager.addScore(continent_score);
          //   saveScoreToDatabase(continent_score);
             // Logic to save the selected radio button
             // For example, save the checkedId or associated data in the fragment's instance variables or shared preferences, or any persistent storage you prefer.
@@ -198,7 +199,9 @@ public class CountryQuizFragment extends Fragment {
             // For example, save the checkedId or associated data in the fragment's instance variables or shared preferences, or any persistent storage you prefer.
         });
 
-         finalScore = continent_score + neighbor_score;
+        //finalScore = continent_score + neighbor_score;
+        ScoreManager.addScore(neighbor_score);
+        //saveScoreToDatabase(finalScore);
     }
     // Method to calculate the quiz score for continent questions
     private int calculateScore_continent(String continentAnswer) {
@@ -231,6 +234,7 @@ public class CountryQuizFragment extends Fragment {
         return score;
     }
 
+    /*
     // Add this method to navigate to the result fragment
     private void navigateToResultFragment(int score) {
         Log.d(DEBUG_TAG, "navigateToResultFragment");
@@ -248,6 +252,8 @@ public class CountryQuizFragment extends Fragment {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+     */
 
     public static int getNumberOfQuestions() {
         Log.d( DEBUG_TAG, "getNumberOfQuestions, quizQuestions: "+quizQuestions );

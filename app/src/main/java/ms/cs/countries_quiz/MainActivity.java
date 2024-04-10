@@ -38,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageSelected(position);
 
                 if (position == 6) {
-                     Toast.makeText(MainActivity.this, "Quiz done", Toast.LENGTH_SHORT).show();
+                    int final_score = ScoreManager.getTotalScore();
+                     Toast.makeText(MainActivity.this, "Quiz done. Final score is " + final_score, Toast.LENGTH_SHORT).show();
 
+                     /*
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     ResultFragment resultFragment = (ResultFragment) fragmentManager.findFragmentById(R.id.fragment_result);
                     Log.d(DEBUG_TAG, "resultFragment " + resultFragment);
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
                     transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
                     transaction.addToBackStack(null);
                     transaction.commit();
+
+                      */
 
 
                 }
